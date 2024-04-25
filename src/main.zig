@@ -7,7 +7,7 @@ const Evm = struct {
     stack_pointer: usize,
 
     pub fn init(allocator: *std.mem.Allocator, code: []const u8, stack_size: usize) !Evm {
-        var stack = try allocator.alloc(u256, stack_size);
+        const stack = try allocator.alloc(u256, stack_size);
         // Initialize stack values to zero
         for (stack) |*item| {
             item.* = 0;
@@ -22,7 +22,9 @@ const Evm = struct {
 
     pub fn push(self: *Evm, value: u256) !void {
         // Ensure we have space on the stack
-        if (self.stack_pointer >= self.stack.len) return error.StackOverflow;
+        if (self.stack_pointer >= self.stack.len) {
+            return error.StackOverflow;
+        }
 
         // Push the value onto the stack
         self.stack[self.stack_pointer] = value;
